@@ -3,7 +3,7 @@
 import sys
 
 
-if len(sys.argv) > 2 or len(sys.argv) < 2:
+if len(sys.argv) != 2:
     print("Usage: nqueens N")
     exit(1)
 
@@ -19,7 +19,7 @@ n = int(sys.argv[1])
 
 
 def queens(n, i=0, a=[], b=[], c=[]):
-    """ find possible positions """
+    """Find all possible solutions for N-Queens problem."""
     if i < n:
         for j in range(n):
             if j not in a and i + j not in b and i - j not in c:
@@ -29,16 +29,11 @@ def queens(n, i=0, a=[], b=[], c=[]):
 
 
 def solve(n):
-    """ solve """
-    k = []
-    i = 0
-    for solution in queens(n, 0):
-        for s in solution:
-            k.append([i, s])
-            i += 1
+    """Print each solution as a list of positions."""
+    for solution in queens(n):
+        # Create a list of queen positions for each solution
+        k = [[i, solution[i]] for i in range(n)]
         print(k)
-        k = []
-        i = 0
 
 
 solve(n)
