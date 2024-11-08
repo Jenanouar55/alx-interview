@@ -1,39 +1,64 @@
 #!/usr/bin/python3
-""" N queens """
+"""N Queens Puzzle Solver"""
 import sys
 
 
 if len(sys.argv) != 2:
     print("Usage: nqueens N")
-    exit(1)
+    sys.exit(1)
 
-if not sys.argv[1].isdigit():
+# Check if N is a valid integer
+try:
+    n = int(sys.argv[1])
+except ValueError:
     print("N must be a number")
-    exit(1)
+    sys.exit(1)
 
-if int(sys.argv[1]) < 4:
+# Check if N is at least 4
+if n < 4:
     print("N must be at least 4")
-    exit(1)
-
-n = int(sys.argv[1])
+    sys.exit(1)
 
 
-def queens(n, i=0, a=[], b=[], c=[]):
-    """Find all possible solutions for N-Queens problem."""
-    if i < n:
-        for j in range(n):
-            if j not in a and i + j not in b and i - j not in c:
-                yield from queens(n, i + 1, a + [j], b + [i + j], c + [i - j])
-    else:
-        yield a
+def solve_nqueens(n):
+    """Solve the N queens puzzle and print all solutions"""
+    def backtrack(row, diagonals, anti_diagonals, cols, state):
+        # If all queens are placed
+        if row == n:
+            solution = [[r, c] for r, c in enumerate(state)]
+            solutions.append(solution)
+            return
+        
+        for col in range(n):
+            curr_diag = row - col
+            curr_anti_diag = row + col
+
+            # Check if the queen is under attack in the column or diagonals
+            if (col in cols or
+                curr_diag in diagonals or
+                curr_anti_diag in anti_diagonals):
+                continue
+
+            # Place the queen
+            cols.add(col)
+            diagonals.add(curr_diag)
+            anti_diagonals.add(curr_anti_diag)
+            state.append(col)
+
+            # Move to the next row
+            backtrack(row + 1, diagonals, anti_diagonals, cols, state)
+
+            # Remove the queen
+            cols.remove(col)
+            diagonals.remove(curr_diag)
+            anti_diagonals.remove(curr_anti_diag)
+            state.pop()
+
+    solutions = []
+    backtrack(0, set(), set(), set(), [])
+    return solutions
 
 
-def solve(n):
-    """Print each solution as a list of positions."""
-    for solution in queens(n):
-        # Create a list of queen positions for each solution
-        k = [[i, solution[i]] for i in range(n)]
-        print(k)
-
-
-solve(n)
+# Print each solution
+for solution in solve_nqueens(n):
+    print(solution)
